@@ -1,0 +1,1 @@
+export const API_URL = 'https://newsapi.org/v2/top-headlines?sources=techcrunch&apiKey=1b77677782f44e88ad2ab497a6167520'
