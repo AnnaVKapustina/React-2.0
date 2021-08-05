@@ -5,8 +5,9 @@ import Chat from './Chat';
 import Home from './Home';
 import Chats from './Chats';
 import Profile from './profile';
+import News from './news';
 
-export default function Router(props) {
+export default function Router() {
 
     return (
         <div>
@@ -16,24 +17,19 @@ export default function Router(props) {
                 </Route>
 
                 <Route path="/chats" exact render={() =>
-                    <Chats
-                        chats={props.chats}
-                        currentChat={props.currentChat}
-                        onCurrentChatChange={props.onCurrentChatChange}
-                        getIsChatExists={props.getIsChatExists}
-                        onAddChat={props.onAddChat}
-                        onRemoveChat={props.onRemoveChat} />} />
+                    <Chats />} />
 
-                <Route path="/chats/:chatId?"
-                    render={({ match }) => {
-                        return (<div className="chat_item_page">
-                            <p className="chat_item_header">{match.params.chatId}</p>
-                            <Chat getIsChatExists={props.getIsChatExists} />
-                        </div>)
-                    }} />
+                <Route path="/chats/:chatId?">
+                    <Chat />
+                </Route>    
+                  
 
                 <Route path="/profile">
                     <Profile />
+                </Route>
+
+                <Route path="/news">
+                    <News />
                 </Route>
 
                 <Route>404 Not Found</Route>

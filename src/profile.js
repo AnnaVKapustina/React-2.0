@@ -3,9 +3,10 @@ import { toggleShowName } from './action/profile';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeName } from './action/profile';
 import Input from './Input';
+import { profileSelector } from './selectors/profile_selectors';
 
 export default function Profile() {
-    const { showName, name } = useSelector((state) => state.profile)
+    const { showName, name } = useSelector(profileSelector)
     const dispatch = useDispatch()
 
     const setShowName = useCallback(() => {
@@ -29,7 +30,8 @@ export default function Profile() {
             {showName && <div>{name}</div>}
             <Input
                 autoFocus
-                placeholder="Введите свое имя"
+                label="Ваше имя"
+                helperText = 'Чтобы добавить свое имя на страницу профиля, введите его в поле и нажмите кнопку "Отправить"'
                 onSubmit={handleNameSubmit} />
         </div>
 

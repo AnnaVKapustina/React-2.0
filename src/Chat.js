@@ -1,11 +1,13 @@
-import { useState, useRef, useMemo, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Redirect, useParams } from 'react-router';
+import { addMessageBot } from './action/Chat';
 import Input from './Input';
 import Message from './Message';
+import { chatSelector } from './selectors/chat_selectors';
+import { chatsSelector } from './selectors/chats_selectors';
+import { useCallback } from 'react';
 
-const Chat = (props) => {
-
-  const { getIsChatExists } = props
+const Chat = () => {
 
   const { chatId } = useParams()
 
@@ -13,37 +15,19 @@ const Chat = (props) => {
     ANNA: 'Anna',
     CHATBOT: 'ChatBot'
   }
-  const [messageList, setMessageList] = useState([]);
+  const messageList = (useSelector(chatSelector)[chatId] || [])
 
-  const timer = useRef(null)
+  const dispatch = useDispatch()
 
-  useEffect(() => {
-
-    if (messageList.length && messageList[messageList.length - 1].author !== AUTHORS.CHATBOT) {
-      timer.current = setTimeout(() => {
-        setMessageList((currentMessageList) => [
-          ...currentMessageList, { author: AUTHORS.CHATBOT, text: 'Привет! Как дела?' }
-        ])
-      }, 1500)
-    }
-  }, [messageList])
-
-  useEffect(() => {
-    return () => {
-      clearTimeout(timer.current)
-    }
-  }, [])
-
-  const handleMessageSubmit = (newMessageText) => {
-    setMessageList((currentMessageList) => [
-      ...currentMessageList, { author: AUTHORS.ANNA, text: newMessageText }
-    ])
+  const chats = useSelector(chatsSelector)
+  const useIsChatExists = ({ chatId }) => {
+    return Boolean(Object.values(chats).find((chat) => chat.id === chatId))
   }
-  const isChatExists = useMemo(
+  const onAddMessage = useCallback((message) => {
+    dispatch(addMessageBot(chatId, { id: `message${Date.now()}`, author: AUTHORS.ANNA, text: message }));
+  }, [chatId, dispatch]);
 
-    () => getIsChatExists(chatId),
-
-    [getIsChatExists, chatId])
+  const isChatExists = useIsChatExists({ chatId })
 
   if (!isChatExists) {
 
@@ -54,16 +38,17 @@ const Chat = (props) => {
     <div className="chat_item">
       {messageList.length ? (
         <div className="messages">
-          {messageList.map((message, index) => (
+          {messageList.map((message) => (
             <Message
-              key={index}
-              text={message.text}
               author={message.author}
+              text={message.text}
+              id={message.id}
             />
           ))}
         </div>
       ) : null}
-      <Input onSubmit={handleMessageSubmit} />
+      <Input 
+      onSubmit={onAddMessage} />
     </div>
   )
 }

@@ -5,19 +5,26 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import Input from './Input';
 import { useHistory } from 'react-router';
+import { addChat, removeChat } from './action/Chats';
+import { useDispatch, useSelector } from 'react-redux';
+import { chatsSelector } from './selectors/chats_selectors';
 
-function Chats(props) {
-  const {
-    chats = [],
-    currentChat,
-    onCurrentChatChange,
-    onAddChat,
-    onRemoveChat
-  } = props
-  const history = useHistory()
+function Chats () {
 
-  const handleChatLinkClick = (chat) => {
-    onCurrentChatChange(chat)
+const chats = useSelector(chatsSelector)
+const dispatch = useDispatch()
+
+const onAddChat = (name) => {
+  dispatch(addChat(`chat${Date.now()}`, name))
+}  
+
+const onRemoveChat = (chatId) => {
+  dispatch(removeChat(chatId))
+}  
+
+
+const history = useHistory()
+const handleChatLinkClick = (chat) => {
     history.push(`/chats/${chat.id}`)
   }
 
@@ -26,14 +33,14 @@ function Chats(props) {
     <div className="chats">
       <List className="chats_navigation">
 
-        {chats.map((chat) => {
+        {Object.values(chats).map((chat) => {
 
           return (
             <>
               <ListItem
                 key={chat.id}
                 button
-                selected={chat.id === currentChat.id}
+                selected={chat.id}
                 onClick={() => handleChatLinkClick(chat)}>
                 {chat.name}
               </ListItem>
@@ -45,7 +52,10 @@ function Chats(props) {
 
       </List>
       <Input
-        onSubmit={onAddChat} />
+        onSubmit={onAddChat}
+        autoFocus
+        label = 'Название чата'
+        helperText = 'Чтобы добавить чат, введите название и нажмите кнопку "Отправить" ' />
     </div>
   );
 }
