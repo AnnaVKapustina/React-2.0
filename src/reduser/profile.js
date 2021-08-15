@@ -1,6 +1,6 @@
 import { CHANGE_IS_AUTHED, CHANGE_NAME, TOGGLE_SHOW_NAME } from "../action/profile";
 
-const initialState = {
+export const initialState = {
     showName: false,
     name: 'John',
     age: 27,
